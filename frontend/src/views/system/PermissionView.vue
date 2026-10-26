@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { systemApi, type Permission } from '@/api/system'
+const rows=ref<Permission[]>([]),visible=ref(false),editingId=ref<number|null>(null),loading=ref(false)
+const form=reactive({code:'',name:'',type:'API',status:'ENABLED'})
+async function load(){loading.value=true;try{rows.value=await systemApi.permissions()}finally{loading.value=false}}
+function create(){editingId.value=null;Object.assign(form,{code:'',name:'',type:'API',status:'ENABLED'});visible.value=true}
+function edit(row:Permission){editingId.value=row.id;Object.assign(form,row);visible.value=true}
+async function save(){if(editingId.value)await systemApi.updatePermission(editingId.value,form);else await systemApi.createPermission(form);visible.value=false;ElMessage.success('权限已保存');await load()}
+async function remove(row:Permission){await ElMessageBox.confirm(`确定删除权限“${row.name}”吗？`,'删除确认',{type:'warning'});await systemApi.deletePermission(row.id);ElMessage.success('已删除');await load()}
+onMounted(load)
+</script>
+<template><section><div class="page-heading"><div><p>PERMISSION</p><h1>权限配置</h1></div><el-button type="primary" @click="create">新增权限</el-button></div><div class="content-card"><el-table v-loading="loading" :data="rows"><el-table-column prop="code" label="权限码"/><el-table-column prop="name" label="权限名称"/><el-table-column prop="type" label="类型" width="100"/><el-table-column label="状态" width="100"><template #default="s"><el-tag :type="s.row.status==='ENABLED'?'success':'info'">{{s.row.status==='ENABLED'?'启用':'停用'}}</el-tag></template></el-table-column><el-table-column label="操作" width="215"><template #default="s"><div class="system-action-group"><el-button class="system-action system-edit-action" @click="edit(s.row)">编辑</el-button><el-button class="system-action system-delete-action" @click="remove(s.row)">删除</el-button></div></template></el-table-column></el-table></div><el-dialog v-model="visible" :title="editingId?'编辑权限':'新增权限'" width="500px"><el-form label-width="90px"><el-form-item label="权限码"><el-input v-model="form.code" placeholder="domain:resource:action"/></el-form-item><el-form-item label="权限名称"><el-input v-model="form.name"/></el-form-item><el-form-item label="类型"><el-select v-model="form.type" style="width:100%"><el-option label="接口" value="API"/><el-option label="菜单" value="MENU"/><el-option label="操作" value="ACTION"/></el-select></el-form-item><el-form-item label="状态"><el-radio-group v-model="form.status"><el-radio value="ENABLED">启用</el-radio><el-radio value="DISABLED">停用</el-radio></el-radio-group></el-form-item></el-form><template #footer><el-button @click="visible=false">取消</el-button><el-button type="primary" @click="save">保存</el-button></template></el-dialog></section></template>

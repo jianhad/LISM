@@ -1,0 +1,26 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Backend
+backend/target/
+*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+
+# Runtime data and secrets
+.env
+deploy/data/
+storage/
+
+# OS
+.DS_Store
+Thumbs.db
+.reference-kube-vue/
+.reference-animated-login/

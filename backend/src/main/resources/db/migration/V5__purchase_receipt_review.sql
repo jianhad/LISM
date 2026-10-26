@@ -1,0 +1,14 @@
+alter table inv_purchase_request add column receipt_supplier_id bigint references inv_supplier(id);
+alter table inv_purchase_request add column receipt_batch_no varchar(100);
+alter table inv_purchase_request add column receipt_warehouse varchar(100);
+alter table inv_purchase_request add column receipt_location varchar(100);
+alter table inv_purchase_request add column receipt_quantity decimal(18,6);
+alter table inv_purchase_request add column receipt_unit_cost decimal(18,2);
+alter table inv_purchase_request add column receipt_production_date date;
+alter table inv_purchase_request add column receipt_expiry_date date;
+alter table inv_purchase_request add column receipt_purpose varchar(500);
+alter table inv_purchase_request add column receipt_submitted_by bigint references sys_user(id);
+alter table inv_purchase_request add column receipt_submitted_at timestamp;
+alter table inv_purchase_request add column receipt_reviewed_by bigint references sys_user(id);
+alter table inv_purchase_request add column receipt_reviewed_at timestamp;
+alter table inv_purchase_request add column receipt_review_comment varchar(1000);
